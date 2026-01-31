@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプル避けゲー</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #222; color: white; font-family: sans-serif; text-align: center; }
+        canvas { display: block; margin: 0 auto; background: #333; }
+        #ui { position: absolute; top: 10px; width: 100%; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>マウス/指で青い玉を動かせ！</h1>
+        <h2 id="score">Score: 0</h2>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let score = 0;
+        let gameOver = false;
+
+        // 画面サイズ調整
+        canvas.width = window.innerWidth > 600 ? 600 : window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // プレイヤー設定
+        const player = { x: canvas.width / 2, y: canvas.height - 100, size: 20, color: '#00d2ff' };
+        
+        // 敵（赤い玉）設定
+        const enemies = [];
+        const enemySize = 15;
+        const enemySpeed = 5;
+
+        // 操作（マウス・タッチ）
+        function movePlayer(e) {
+            const rect = canvas.getBoundingClientRect();
+            let inputX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            player.x = inputX;
+        }
+        window.addEventListener('mousemove', movePlayer);
+        window.addEventListener('touchmove', movePlayer, { passive: false });
+
+        // ゲームループ
+        function update() {
+            if (gameOver) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // プレイヤー描画
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 敵の生成と移動
+            if (Math.random() < 0.05) {
+                enemies.push({ x: Math.random() * canvas.width, y: -20 });
+            }
+
+            ctx.fillStyle = '#ff4757';
+            for (let i = 0; i < enemies.length; i++) {
+                enemies[i].y += enemySpeed;
+                ctx.beginPath();
+                ctx.arc(enemies[i].x, enemies[i].y, enemySize, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 衝突判定
+                const dx = player.x - enemies[i].x;
+                const dy = player.y - enemies[i].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < player.size + enemySize) {
+                    gameOver = true;
+                    alert(`ゲームオーバー！ スコア: ${score}\n再読み込みでリトライ`);
+                    location.reload();
+                }
+            }
+
+            // スコア加算
+            score++;
+            document.getElementById('score').innerText = `Score: ${score}`;
+
+            requestAnimationFrame(update);
+        }
+
+        update();
+    </script>
+</body>
+</html>
