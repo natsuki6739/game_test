@@ -21,7 +21,7 @@
             border: 2px dashed #bbb; border-radius: 8px; font-weight: bold;
         }
 
-        /* ゲームラッパー（ゲーム＋ランキング） */
+        /* ゲームラッパー */
         .game-wrapper {
             display: flex;
             gap: 20px;
@@ -53,7 +53,7 @@
         #start-btn {
             padding: 15px 50px;
             font-size: 1.5rem;
-            background: #ff4757; /* ハードモードっぽい赤色 */
+            background: #ff4757;
             color: white;
             border: none;
             border-radius: 50px;
@@ -69,7 +69,6 @@
         /* 右側：サイドバー */
         #sidebar { flex: 1; background: #333; color: white; padding: 15px; border-radius: 4px; min-width: 250px; }
         
-        /* ランキングデザイン */
         #sidebar h3 { color: #00d2ff; margin-top: 0; border-bottom: 1px solid #555; padding-bottom: 10px; }
         #ranking-list { padding-left: 20px; color: #ddd; margin: 0; }
         #ranking-list li { margin-bottom: 8px; border-bottom: 1px solid #444; padding: 5px 0; font-size: 0.9rem; display: flex; justify-content: space-between; }
@@ -150,7 +149,7 @@
 
     <script>
         // ▼▼ ここにあなたのGASのURLを貼り付けてください ▼▼
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbw1qHVj8ZEiWTrfMHe1QKSmnbGgs4K_0NRhMvbJEWXlqQiD7097q-yQYmT-kzyCw43D/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxK4skqwJOklnYRYk2dD0QcIDLm2zl7CRnhini5O7KGnVYDs8q1butsdL4jJPrCwBSPNQ/exec"; 
         // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         const canvas = document.getElementById('gameCanvas');
@@ -173,15 +172,13 @@
         let isRankIn = false;
         let animationId;
 
-        // プレイヤー初期化
         const player = { x: canvas.width / 2, y: 400, size: 15, color: '#00d2ff' };
         let enemies = [];
 
-        // ★難易度設定（最初から難しく！）
-        const initialSpeed = 8; // 初期スピード（以前は5）
-        const initialSpawnRate = 0.08; // 初期出現率（以前は0.05）
+        // 難易度設定
+        const initialSpeed = 8; 
+        const initialSpawnRate = 0.08; 
 
-        // スタートボタン処理
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
             resetGame();
@@ -192,7 +189,6 @@
             isPlaying = false;
         }
 
-        // 操作イベント
         function movePlayer(e) {
             if (!isPlaying || gameOver) return;
             const rect = canvas.getBoundingClientRect();
@@ -222,11 +218,9 @@
             if (gameOver) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 難易度調整ロジック（スコアに応じてさらに鬼畜に）
             const currentSpeed = initialSpeed + (score / 100); 
             const spawnRate = initialSpawnRate + (score / 2000);
 
-            // プレイヤー描画
             ctx.shadowBlur = 15;
             ctx.shadowColor = player.color;
             ctx.fillStyle = player.color;
@@ -235,16 +229,14 @@
             ctx.fill();
             ctx.shadowBlur = 0;
 
-            // 敵の生成
             if (Math.random() < spawnRate) {
                 enemies.push({ 
                     x: Math.random() * canvas.width, 
                     y: -30,
-                    size: 8 + Math.random() * 10 // 大きさもランダム
+                    size: 8 + Math.random() * 10 
                 });
             }
 
-            // 敵の移動
             ctx.fillStyle = '#ff4757';
             for (let i = 0; i < enemies.length; i++) {
                 enemies[i].y += currentSpeed;
@@ -252,7 +244,6 @@
                 ctx.arc(enemies[i].x, enemies[i].y, enemies[i].size, 0, Math.PI * 2);
                 ctx.fill();
 
-                // 衝突判定
                 const dx = player.x - enemies[i].x;
                 const dy = player.y - enemies[i].y;
                 if (Math.sqrt(dx*dx + dy*dy) < player.size + enemies[i].size) {
@@ -264,122 +255,7 @@
             enemies = enemies.filter(e => e.y < canvas.height + 50);
             score++;
             
-            // スコア表示
             ctx.fillStyle = "white";
             ctx.font = "bold 24px Arial";
             ctx.textAlign = "left";
-            ctx.fillText("Score: " + score, 20, 40);
-
-            animationId = requestAnimationFrame(update);
-        }
-
-        function endGame() {
-            gameOver = true;
-            isPlaying = false;
-            
-            ctx.fillStyle = "rgba(0,0,0,0.7)";
-            ctx.fillRect(0,0,canvas.width, canvas.height);
-            
-            ctx.fillStyle = "#ff4757";
-            ctx.font = "bold 40px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 20);
-            
-            ctx.fillStyle = "white";
-            ctx.font = "20px Arial";
-            ctx.fillText("Final Score: " + score, canvas.width/2, canvas.height/2 + 30);
-
-            checkRankIn();
-            
-            // 1秒後にクリックでタイトルに戻るイベントを設定
-            setTimeout(() => {
-                if(!isRankIn) {
-                    ctx.font = "16px Arial";
-                    ctx.fillStyle = "#ccc";
-                    ctx.fillText("Click to Title", canvas.width/2, canvas.height/2 + 70);
-                    
-                    const returnTitle = () => {
-                        showTitle();
-                        canvas.removeEventListener('click', returnTitle);
-                        canvas.removeEventListener('touchstart', returnTitle);
-                    };
-                    canvas.addEventListener('click', returnTitle);
-                    canvas.addEventListener('touchstart', returnTitle);
-                }
-            }, 1000);
-        }
-
-        // --- ランキング機能（変更なし） ---
-        let currentRanking = [];
-
-        async function fetchRanking() {
-            document.getElementById('loading').style.display = 'block';
-            try {
-                const res = await fetch(GAS_URL + "?action=get");
-                const data = await res.json();
-                currentRanking = data;
-                renderRanking(data);
-                document.getElementById('loading').style.display = 'none';
-            } catch (e) {
-                console.error(e);
-                document.getElementById('loading').innerText = "Ranking Error";
-            }
-        }
-
-        function renderRanking(data) {
-            const list = document.getElementById('ranking-list');
-            list.innerHTML = "";
-            data.forEach((item, index) => {
-                const li = document.createElement('li');
-                let icon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1) + '.';
-                li.innerHTML = `<span>${icon} ${escapeHtml(item.name)}</span> <span class="rank-score">${item.score}</span>`;
-                if(index < 3) li.style.color = "#ffd700";
-                list.appendChild(li);
-            });
-        }
-
-        function checkRankIn() {
-            const lowestScore = currentRanking.length < 10 ? 0 : currentRanking[currentRanking.length - 1].score;
-            if (score > lowestScore || currentRanking.length < 10) {
-                isRankIn = true;
-                document.getElementById('input-form').style.display = 'block';
-                document.getElementById('final-score').innerText = score;
-            }
-        }
-
-        async function submitScore() {
-            const name = document.getElementById('player-name').value || "No Name";
-            const btn = document.querySelector('.rank-btn');
-            btn.disabled = true;
-            btn.innerText = "Sending...";
-
-            try {
-                await fetch(`${GAS_URL}?action=add&name=${encodeURIComponent(name)}&score=${score}`);
-                await fetchRanking();
-                alert("Ranked in!");
-                document.getElementById('input-form').style.display = 'none';
-                isRankIn = false;
-                showTitle(); 
-            } catch (e) {
-                alert("Error: " + e);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "登録";
-            }
-        }
-
-        function escapeHtml(str) {
-            if(!str) return str;
-            return str.replace(/[&<>"']/g, function(m) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-            });
-        }
-
-        fetchRanking();
-        // 最初の描画
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0,0,canvas.width, canvas.height);
-
-    </script>
-</body>
-</html>
+            ctx.fillText("
