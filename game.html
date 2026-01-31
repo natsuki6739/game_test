@@ -3,63 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>シンプル避けゲー</title>
+    <title>青い玉の冒険 - ブラウザで遊べる無料アクションゲーム</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #222; color: white; font-family: sans-serif; text-align: center; }
-        canvas { display: block; margin: 0 auto; background: #333; }
-        #ui { position: absolute; top: 10px; width: 100%; pointer-events: none; }
+        body { margin: 0; padding: 0; background: #f0f0f0; color: #333; font-family: "Helvetica Neue", Arial, sans-serif; line-height: 1.6; }
+        header { background: #222; color: white; padding: 20px; text-align: center; }
+        main { max-width: 800px; margin: 20px auto; padding: 0 20px; }
+        .game-container { text-align: center; margin: 20px 0; }
+        canvas { background: #333; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .ad-space { background: #ddd; height: 100px; line-height: 100px; text-align: center; margin: 20px 0; color: #666; border: 2px dashed #bbb; }
+        h1 { margin: 0; font-size: 1.5rem; }
+        h2 { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <div id="ui">
-        <h1>マウス/指で青い玉を動かせ！</h1>
-        <h2 id="score">Score: 0</h2>
-    </div>
-    <canvas id="gameCanvas"></canvas>
+
+    <header>
+        <h1>青い玉の冒険 (Beta)</h1>
+        <p>シンプル操作で楽しめる、暇つぶしに最適な避けゲー</p>
+    </header>
+
+    <main>
+        <div class="ad-space">ここにGoogle AdSenseの広告バナーが入ります</div>
+
+        <div class="game-container">
+            <canvas id="gameCanvas"></canvas>
+            <p>PCはマウス、スマホはタッチで操作</p>
+        </div>
+
+        <section>
+            <h2>遊び方</h2>
+            <p>青いプレイヤーを操作して、上から降ってくる赤い敵を避けてください。</p>
+            <ul>
+                <li><strong>操作方法：</strong> マウスカーソルまたは指の動きに追従します。</li>
+                <li><strong>スコア：</strong> 生き残った時間がスコアになります。</li>
+                <li><strong>ゲームオーバー：</strong> 赤い玉に当たると終了です。再読み込みでリトライできます。</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>開発者向け情報（アップデート予定）</h2>
+            <p>現在はベータ版です。今後は以下の機能を追加予定です。</p>
+            <ul>
+                <li>ハイスコアの保存機能</li>
+                <li>難易度選択モード</li>
+                <li>BGMと効果音の実装</li>
+            </ul>
+            <p>このゲームはJavaScriptとHTML5 Canvasで作られています。</p>
+        </section>
+
+        <div class="ad-space">ここにGoogle AdSenseの広告バナーが入ります</div>
+    </main>
 
     <script>
+        // ゲームのコード（前回と同じもの）
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         let score = 0;
         let gameOver = false;
 
-        // 画面サイズ調整
-        canvas.width = window.innerWidth > 600 ? 600 : window.innerWidth;
-        canvas.height = window.innerHeight;
+        // スマホでも見やすいようにサイズ調整
+        const maxWidth = 600;
+        const width = Math.min(window.innerWidth - 40, maxWidth);
+        canvas.width = width;
+        canvas.height = window.innerHeight * 0.6; // 画面の6割くらいの高さ
 
-        // プレイヤー設定
-        const player = { x: canvas.width / 2, y: canvas.height - 100, size: 20, color: '#00d2ff' };
-        
-        // 敵（赤い玉）設定
+        const player = { x: canvas.width / 2, y: canvas.height - 50, size: 15, color: '#00d2ff' };
         const enemies = [];
-        const enemySize = 15;
-        const enemySpeed = 5;
+        const enemySize = 10;
+        const enemySpeed = 4;
 
-        // 操作（マウス・タッチ）
         function movePlayer(e) {
             const rect = canvas.getBoundingClientRect();
-            let inputX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let inputX = clientX - rect.left;
+            // 画面外に出ないように制限
+            if (inputX < 0) inputX = 0;
+            if (inputX > canvas.width) inputX = canvas.width;
             player.x = inputX;
         }
+        
+        // スマホのスクロール防止
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
+        
         window.addEventListener('mousemove', movePlayer);
         window.addEventListener('touchmove', movePlayer, { passive: false });
 
-        // ゲームループ
         function update() {
             if (gameOver) return;
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // プレイヤー描画
+            // Player
             ctx.fillStyle = player.color;
             ctx.beginPath();
             ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
             ctx.fill();
 
-            // 敵の生成と移動
-            if (Math.random() < 0.05) {
-                enemies.push({ x: Math.random() * canvas.width, y: -20 });
-            }
+            // Enemies
+            if (Math.random() < 0.05) enemies.push({ x: Math.random() * canvas.width, y: -20 });
 
             ctx.fillStyle = '#ff4757';
             for (let i = 0; i < enemies.length; i++) {
@@ -68,25 +109,20 @@
                 ctx.arc(enemies[i].x, enemies[i].y, enemySize, 0, Math.PI * 2);
                 ctx.fill();
 
-                // 衝突判定
                 const dx = player.x - enemies[i].x;
                 const dy = player.y - enemies[i].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < player.size + enemySize) {
+                if (Math.sqrt(dx * dx + dy * dy) < player.size + enemySize) {
                     gameOver = true;
-                    alert(`ゲームオーバー！ スコア: ${score}\n再読み込みでリトライ`);
+                    alert(`Score: ${score}`);
                     location.reload();
                 }
             }
-
-            // スコア加算
             score++;
-            document.getElementById('score').innerText = `Score: ${score}`;
-
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 10, 30);
             requestAnimationFrame(update);
         }
-
         update();
     </script>
 </body>
