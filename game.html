@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Adventure - Clear View</title>
+    <title>Blue Adventure</title>
     <style>
         /* 全体のデザイン設定 */
         body { margin: 0; padding: 0; background: #eee; color: #333; font-family: "Helvetica Neue", Arial, sans-serif; }
-        header { background: #222; color: white; padding: 15px 0; text-align: center; border-bottom: 4px solid #ff4757; }
+        header { background: #222; color: white; padding: 15px 0; text-align: center; border-bottom: 4px solid #00d2ff; }
         h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
         .subtitle { font-size: 0.8rem; color: #ccc; margin-top: 5px; }
         main { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
@@ -21,7 +21,7 @@
         /* ゲームとランキングを横並びにする枠 */
         .game-wrapper {
             display: flex; gap: 20px; margin-bottom: 30px;
-            align-items: flex-start; /* 上揃え */
+            align-items: flex-start;
         }
 
         /* 左側：ゲーム画面（黒背景） */
@@ -32,11 +32,11 @@
             background: #000; 
             overflow: hidden; 
             border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* 濃い影 */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
         canvas { display: block; width: 100%; height: 100%; }
 
-        /* スタート画面（ゲームの中に閉じ込める） */
+        /* スタート画面 */
         #start-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
@@ -45,22 +45,22 @@
             z-index: 100; color: white;
         }
         #start-btn {
-            padding: 15px 40px; font-size: 1.4rem; background: #ff4757;
-            color: white; border: none; border-radius: 50px; cursor: pointer;
-            font-weight: bold; box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+            padding: 15px 40px; font-size: 1.4rem; background: #00d2ff;
+            color: #000; border: none; border-radius: 50px; cursor: pointer;
+            font-weight: bold; box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
             transition: transform 0.2s; margin-top: 20px;
         }
         #start-btn:hover { transform: scale(1.05); }
 
-        /* 右側：サイドバー（★ここを白背景に変更★） */
+        /* 右側：ランキングエリア（白背景で見やすく） */
         #sidebar { 
             flex: 1; 
-            background: #ffffff; /* 真っ白 */
-            color: #333;         /* 文字は黒 */
+            background: #ffffff; 
+            color: #333; 
             padding: 20px; 
             border-radius: 8px;
             min-width: 250px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* 薄い影 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border: 1px solid #ddd;
         }
         #sidebar h3 { color: #007bff; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 1.2rem; }
@@ -73,7 +73,6 @@
             display: flex; justify-content: space-between; 
             color: #444;
         }
-        /* 1位~3位のアイコン色 */
         .rank-icon { font-weight: bold; margin-right: 5px; }
         .rank-score { color: #007bff; font-weight: bold; }
         
@@ -96,8 +95,8 @@
 <body>
 
     <header>
-        <h1>BLUE ADVENTURE <span style="color:#ff4757; font-size:0.7em;">(HARD)</span></h1>
-        <div class="subtitle">赤い弾幕を避けろ！</div>
+        <h1>BLUE ADVENTURE</h1>
+        <div class="subtitle">赤い弾幕を避けろ！ランキング機能搭載</div>
     </header>
 
     <main>
@@ -107,7 +106,7 @@
             <div id="game-container">
                 <div id="start-screen">
                     <h2 style="border:none; color:#00d2ff; font-size:2rem; margin-bottom:10px;">READY?</h2>
-                    <p style="color:#ddd;">敵の速度：<span style="color:#ff4757; font-weight:bold;">高速</span></p>
+                    <p style="color:#ddd;">敵の速度：<span style="color:#00d2ff; font-weight:bold;">徐々に加速</span></p>
                     <button id="start-btn">GAME START</button>
                 </div>
                 <canvas id="gameCanvas"></canvas>
@@ -136,6 +135,10 @@
                 <h2>遊び方</h2>
                 <p>スタートボタンを押すとゲームが始まります。青い玉を操作して、上から降ってくる赤い玉を避けてください。</p>
             </section>
+            <section>
+                <h2>攻略のヒント</h2>
+                <p>最初はゆっくりですが、スコアが上がるにつれて敵がスピードアップします。集中力を切らさないように頑張ってください！</p>
+            </section>
         </div>
 
         <div class="ad-space">ここに広告</div>
@@ -143,7 +146,7 @@
 
     <script>
         // ▼▼ ここにあなたのGASのURLを貼り付けてください ▼▼
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxK4skqwJOklnYRYk2dD0QcIDLm2zl7CRnhini5O7KGnVYDs8q1butsdL4jJPrCwBSPNQ/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw1qHVj8ZEiWTrfMHe1QKSmnbGgs4K_0NRhMvbJEWXlqQiD7097q-yQYmT-kzyCw43D/exec"; 
         // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         const canvas = document.getElementById('gameCanvas');
@@ -168,8 +171,11 @@
         const player = { x: canvas.width / 2, y: 400, size: 15, color: '#00d2ff' };
         let enemies = [];
 
-        const initialSpeed = 8; 
-        const initialSpawnRate = 0.08; 
+        // ★難易度調整エリア★
+        // 初期スピードを 8 → 4 に変更（ゆっくりスタート）
+        const initialSpeed = 4; 
+        // 初期出現率を 0.08 → 0.04 に変更（敵少なめスタート）
+        const initialSpawnRate = 0.04; 
 
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
@@ -210,7 +216,10 @@
             if (gameOver) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // 難易度上昇ロジック
+            // スコア100点ごとにスピードが+1される
             const currentSpeed = initialSpeed + (score / 100); 
+            // スコア2000点ごとに敵の出現率が増える
             const spawnRate = initialSpawnRate + (score / 2000);
 
             ctx.shadowBlur = 15;
@@ -251,6 +260,11 @@
             ctx.font = "bold 24px Arial";
             ctx.textAlign = "left";
             ctx.fillText("Score: " + score, 20, 40);
+            
+            // 現在のレベル（速度）を表示
+            ctx.font = "14px Arial";
+            ctx.fillStyle = "#aaa";
+            ctx.fillText("Lv." + Math.floor(currentSpeed - 3), 20, 65);
 
             animationId = requestAnimationFrame(update);
         }
@@ -314,7 +328,6 @@
                 let icon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1) + '.';
                 const safeName = item.name ? String(item.name).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m])) : "No Name";
                 
-                // アイコン、名前、スコアを並べる
                 li.innerHTML = `
                     <div style="display:flex; align-items:center;">
                         <span class="rank-icon" style="width:25px;">${icon}</span>
