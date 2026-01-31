@@ -168,7 +168,7 @@
         let enemies = [];
 
         // ★難易度設定（最初の標準レベル）★
-        const initialSpeed = 3;      // 8から5に戻しました（標準速度）
+        const initialSpeed = 1;      // 8から5に戻しました（標準速度）
         const initialSpawnRate = 0.01; // 0.08から0.05に戻しました（標準頻度）
 
         startBtn.addEventListener('click', () => {
@@ -226,7 +226,7 @@
                 enemies.push({ 
                     x: Math.random() * canvas.width, 
                     y: -30,
-                    size: 8 + Math.random() * 8 
+                    size: 5 + Math.random() * 5 
                 });
             }
 
@@ -365,4 +365,5 @@
     </script>
 </body>
 </html>
+
 
