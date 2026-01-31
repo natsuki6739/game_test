@@ -3,126 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>青い玉の冒険 - ブラウザで遊べる無料アクションゲーム</title>
+    <title>青い玉の冒険 with Ranking</title>
     <style>
-        body { margin: 0; padding: 0; background: #f0f0f0; color: #333; font-family: "Helvetica Neue", Arial, sans-serif; line-height: 1.6; }
-        header { background: #222; color: white; padding: 20px; text-align: center; }
-        main { max-width: 800px; margin: 20px auto; padding: 0 20px; }
-        .game-container { text-align: center; margin: 20px 0; }
-        canvas { background: #333; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .ad-space { background: #ddd; height: 100px; line-height: 100px; text-align: center; margin: 20px 0; color: #666; border: 2px dashed #bbb; }
-        h1 { margin: 0; font-size: 1.5rem; }
-        h2 { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; }
-        .btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+        body { margin: 0; background: #f0f0f0; font-family: sans-serif; display: flex; height: 100vh; overflow: hidden;}
+        
+        /* レイアウト：左がゲーム、右がランキング */
+        #game-area { flex: 3; position: relative; background: #222; display: flex; justify-content: center; align-items: center; }
+        #sidebar { flex: 1; background: #333; color: white; padding: 20px; box-shadow: -2px 0 5px rgba(0,0,0,0.5); overflow-y: auto; z-index: 10; min-width: 250px;}
+
+        canvas { background: #111; box-shadow: 0 0 20px rgba(0,0,0,0.5); max-width: 100%; max-height: 100%; }
+
+        /* ランキングのスタイル */
+        h2 { border-bottom: 2px solid #00d2ff; padding-bottom: 5px; margin-top: 0; }
+        ol { padding-left: 20px; }
+        li { margin-bottom: 8px; font-size: 16px; border-bottom: 1px solid #444; padding: 5px 0; display: flex; justify-content: space-between; }
+        .rank-score { color: #00d2ff; font-weight: bold; }
+
+        /* 名前入力フォーム（Top10入りの時だけ表示） */
+        #input-form { display: none; background: #444; padding: 15px; border-radius: 5px; margin-top: 20px; border: 1px solid #00d2ff; }
+        input { width: 90%; padding: 8px; margin-bottom: 10px; border: none; border-radius: 3px; }
+        button { width: 100%; padding: 10px; background: #00d2ff; border: none; color: #222; font-weight: bold; cursor: pointer; border-radius: 3px; }
+        button:hover { background: #00b0d9; }
+        
+        /* スマホ対応 */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            #game-area { flex: 2; }
+            #sidebar { flex: 1; min-height: 200px; }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>青い玉の冒険 (Beta)</h1>
-        <p>シンプル操作で楽しめる、暇つぶしに最適な避けゲー</p>
-    </header>
+    <div id="game-area">
+        <canvas id="gameCanvas"></canvas>
+    </div>
 
-    <main>
-        <div class="ad-space">ここにGoogle AdSenseの広告バナーが入ります</div>
+    <div id="sidebar">
+        <h2>🏆 TOP 10 Ranking</h2>
+        <div id="loading">読み込み中...</div>
+        <ol id="ranking-list"></ol>
 
-        <div class="game-container">
-            <canvas id="gameCanvas"></canvas>
-            <p>PCはマウス、スマホはタッチで操作</p>
+        <div id="input-form">
+            <h3>🎉 Top 10入り！</h3>
+            <p>スコア: <span id="final-score"></span></p>
+            <input type="text" id="player-name" placeholder="名前を入力 (8文字以内)" maxlength="8">
+            <button onclick="submitScore()">ランキングに登録</button>
         </div>
-
-        <section>
-            <h2>遊び方</h2>
-            <p>青いプレイヤーを操作して、上から降ってくる赤い敵を避けてください。</p>
-            <ul>
-                <li><strong>操作方法：</strong> マウスカーソルまたは指の動きに追従します。</li>
-                <li><strong>スコア：</strong> 生き残った時間がスコアになります。</li>
-                <li><strong>ゲームオーバー：</strong> 赤い玉に当たると終了です。再読み込みでリトライできます。</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>開発者向け情報（アップデート予定）</h2>
-            <p>現在はベータ版です。今後は以下の機能を追加予定です。</p>
-            <ul>
-                <li>ハイスコアの保存機能</li>
-                <li>難易度選択モード</li>
-                <li>BGMと効果音の実装</li>
-            </ul>
-            <p>このゲームはJavaScriptとHTML5 Canvasで作られています。</p>
-        </section>
-
-        <div class="ad-space">ここにGoogle AdSenseの広告バナーが入ります</div>
-    </main>
+        
+        <div style="margin-top: 30px; font-size: 12px; color: #aaa;">
+            <p>スペースキーまたはタップでリトライ</p>
+        </div>
+    </div>
 
     <script>
-        // ゲームのコード（前回と同じもの）
+        // ▼▼ ここにコピーしたGASのURLを貼り付けてください ▼▼
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxK4skqwJOklnYRYk2dD0QclDLm2zl7CRnhini5O7KGnVYDs8q1butsdL4jJPrCwBSPNQ/exec"; 
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        
+        // 画面サイズ調整
+        function resize() {
+            const container = document.getElementById('game-area');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // ゲーム変数
         let score = 0;
         let gameOver = false;
-
-        // スマホでも見やすいようにサイズ調整
-        const maxWidth = 600;
-        const width = Math.min(window.innerWidth - 40, maxWidth);
-        canvas.width = width;
-        canvas.height = window.innerHeight * 0.6; // 画面の6割くらいの高さ
-
+        let isRankIn = false;
         const player = { x: canvas.width / 2, y: canvas.height - 50, size: 15, color: '#00d2ff' };
-        const enemies = [];
-        const enemySize = 10;
-        const enemySpeed = 4;
+        let enemies = [];
+        
+        // ランキングデータ
+        let currentRanking = [];
 
+        // 操作
         function movePlayer(e) {
+            if(gameOver) return;
             const rect = canvas.getBoundingClientRect();
             let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            let inputX = clientX - rect.left;
-            // 画面外に出ないように制限
-            if (inputX < 0) inputX = 0;
-            if (inputX > canvas.width) inputX = canvas.width;
-            player.x = inputX;
+            player.x = clientX - rect.left;
         }
+        canvas.addEventListener('mousemove', movePlayer);
+        canvas.addEventListener('touchmove', movePlayer, { passive: false });
         
-        // スマホのスクロール防止
-        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
-        
-        window.addEventListener('mousemove', movePlayer);
-        window.addEventListener('touchmove', movePlayer, { passive: false });
+        // リスタート（スペースキー）
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && gameOver && !isRankIn) resetGame();
+        });
+        canvas.addEventListener('click', () => {
+            if (gameOver && !isRankIn) resetGame();
+        });
 
+        function resetGame() {
+            score = 0;
+            enemies = [];
+            gameOver = false;
+            isRankIn = false;
+            document.getElementById('input-form').style.display = 'none';
+            update();
+        }
+
+        // ゲームループ
         function update() {
             if (gameOver) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Player
+            // プレイヤー
             ctx.fillStyle = player.color;
             ctx.beginPath();
             ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
             ctx.fill();
 
-            // Enemies
+            // 敵
             if (Math.random() < 0.05) enemies.push({ x: Math.random() * canvas.width, y: -20 });
 
             ctx.fillStyle = '#ff4757';
             for (let i = 0; i < enemies.length; i++) {
-                enemies[i].y += enemySpeed;
+                enemies[i].y += 5;
                 ctx.beginPath();
-                ctx.arc(enemies[i].x, enemies[i].y, enemySize, 0, Math.PI * 2);
+                ctx.arc(enemies[i].x, enemies[i].y, 10, 0, Math.PI * 2);
                 ctx.fill();
 
+                // 衝突判定
                 const dx = player.x - enemies[i].x;
                 const dy = player.y - enemies[i].y;
-                if (Math.sqrt(dx * dx + dy * dy) < player.size + enemySize) {
-                    gameOver = true;
-                    alert(`Score: ${score}`);
-                    location.reload();
+                if (Math.sqrt(dx*dx + dy*dy) < 25) {
+                    endGame();
                 }
             }
             score++;
+            
+            // スコア表示
             ctx.fillStyle = "white";
             ctx.font = "20px Arial";
-            ctx.fillText("Score: " + score, 10, 30);
+            ctx.textAlign = "left";
+            ctx.fillText("Score: " + score, 20, 40);
+
             requestAnimationFrame(update);
         }
+
+        function endGame() {
+            gameOver = true;
+            ctx.fillStyle = "rgba(0,0,0,0.7)";
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2);
+
+            checkRankIn();
+        }
+
+        // --- ランキングシステム ---
+
+        // 1. ランキング読み込み
+        async function fetchRanking() {
+            document.getElementById('loading').style.display = 'block';
+            try {
+                const res = await fetch(GAS_URL + "?action=get");
+                const data = await res.json();
+                currentRanking = data;
+                renderRanking(data);
+            } catch (e) {
+                console.error("ランキング取得失敗", e);
+                document.getElementById('ranking-list').innerHTML = "<li>取得エラー</li>";
+            }
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // 2. ランキング表示
+        function renderRanking(data) {
+            const list = document.getElementById('ranking-list');
+            list.innerHTML = "";
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${escapeHtml(item.name)}</span> <span class="rank-score">${item.score}</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        // 3. ランクイン判定
+        function checkRankIn() {
+            // 10位以内のスコアか、まだ10人いない場合
+            const lowestScore = currentRanking.length < 10 ? 0 : currentRanking[currentRanking.length - 1].score;
+            
+            if (score > lowestScore || currentRanking.length < 10) {
+                isRankIn = true;
+                document.getElementById('input-form').style.display = 'block';
+                document.getElementById('final-score').innerText = score;
+            }
+        }
+
+        // 4. スコア送信
+        async function submitScore() {
+            const name = document.getElementById('player-name').value || "名無し";
+            const btn = document.querySelector('button');
+            btn.disabled = true;
+            btn.innerText = "送信中...";
+
+            try {
+                // GASに送信
+                await fetch(`${GAS_URL}?action=add&name=${encodeURIComponent(name)}&score=${score}`);
+                
+                // 送信後に最新ランキングを再取得
+                await fetchRanking();
+                
+                // フォームを隠してリセット待機
+                document.getElementById('input-form').style.display = 'none';
+                isRankIn = false;
+                alert("登録しました！");
+            } catch (e) {
+                alert("送信エラー");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "ランキングに登録";
+            }
+        }
+
+        function escapeHtml(str) {
+            if(!str) return str;
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        // 初回読み込み
+        fetchRanking();
         update();
     </script>
 </body>
