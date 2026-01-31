@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Adventure</title>
+    <title>Blue Adventure - Standard</title>
     <style>
         /* 全体のデザイン設定 */
         body { margin: 0; padding: 0; background: #eee; color: #333; font-family: "Helvetica Neue", Arial, sans-serif; }
@@ -52,7 +52,7 @@
         }
         #start-btn:hover { transform: scale(1.05); }
 
-        /* 右側：ランキングエリア（白背景で見やすく） */
+        /* 右側：ランキングエリア（白背景） */
         #sidebar { 
             flex: 1; 
             background: #ffffff; 
@@ -96,7 +96,7 @@
 
     <header>
         <h1>BLUE ADVENTURE</h1>
-        <div class="subtitle">赤い弾幕を避けろ！ランキング機能搭載</div>
+        <div class="subtitle">赤い弾幕を避けろ！</div>
     </header>
 
     <main>
@@ -106,7 +106,7 @@
             <div id="game-container">
                 <div id="start-screen">
                     <h2 style="border:none; color:#00d2ff; font-size:2rem; margin-bottom:10px;">READY?</h2>
-                    <p style="color:#ddd;">敵の速度：<span style="color:#00d2ff; font-weight:bold;">徐々に加速</span></p>
+                    <p style="color:#ddd;">難易度：<span style="color:#00d2ff; font-weight:bold;">標準</span></p>
                     <button id="start-btn">GAME START</button>
                 </div>
                 <canvas id="gameCanvas"></canvas>
@@ -134,10 +134,6 @@
             <section>
                 <h2>遊び方</h2>
                 <p>スタートボタンを押すとゲームが始まります。青い玉を操作して、上から降ってくる赤い玉を避けてください。</p>
-            </section>
-            <section>
-                <h2>攻略のヒント</h2>
-                <p>最初はゆっくりですが、スコアが上がるにつれて敵がスピードアップします。集中力を切らさないように頑張ってください！</p>
             </section>
         </div>
 
@@ -171,11 +167,9 @@
         const player = { x: canvas.width / 2, y: 400, size: 15, color: '#00d2ff' };
         let enemies = [];
 
-        // ★難易度調整エリア★
-        // 初期スピードを 8 → 4 に変更（ゆっくりスタート）
-        const initialSpeed = 1; 
-        // 初期出現率を 0.08 → 0.04 に変更（敵少なめスタート）
-        const initialSpawnRate = 0.001; 
+        // ★難易度設定（最初の標準レベル）★
+        const initialSpeed = 5;      // 8から5に戻しました（標準速度）
+        const initialSpawnRate = 0.05; // 0.08から0.05に戻しました（標準頻度）
 
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
@@ -216,11 +210,9 @@
             if (gameOver) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 難易度上昇ロジック
-            // スコア100点ごとにスピードが+1される
-            const currentSpeed = initialSpeed + (score / 500); 
-            // スコア2000点ごとに敵の出現率が増える
-            const spawnRate = initialSpawnRate + (score / 500)*0.001;
+            // 難易度上昇も緩やかに
+            const currentSpeed = initialSpeed + (score / 300); 
+            const spawnRate = initialSpawnRate + (score / 3000);
 
             ctx.shadowBlur = 15;
             ctx.shadowColor = player.color;
@@ -234,7 +226,7 @@
                 enemies.push({ 
                     x: Math.random() * canvas.width, 
                     y: -30,
-                    size: 8 + Math.random() * 10 
+                    size: 8 + Math.random() * 8 
                 });
             }
 
@@ -260,11 +252,6 @@
             ctx.font = "bold 24px Arial";
             ctx.textAlign = "left";
             ctx.fillText("Score: " + score, 20, 40);
-            
-            // 現在のレベル（速度）を表示
-            ctx.font = "14px Arial";
-            ctx.fillStyle = "#aaa";
-            ctx.fillText("Lv." + Math.floor(currentSpeed - 3), 20, 65);
 
             animationId = requestAnimationFrame(update);
         }
@@ -378,8 +365,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
