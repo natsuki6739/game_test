@@ -168,8 +168,8 @@
         let enemies = [];
 
         // ★難易度設定（最初の標準レベル）★
-        const initialSpeed = 5;      // 8から5に戻しました（標準速度）
-        const initialSpawnRate = 0.05; // 0.08から0.05に戻しました（標準頻度）
+        const initialSpeed = 3;      // 8から5に戻しました（標準速度）
+        const initialSpawnRate = 0.01; // 0.08から0.05に戻しました（標準頻度）
 
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
@@ -211,8 +211,8 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // 難易度上昇も緩やかに
-            const currentSpeed = initialSpeed + (score / 300); 
-            const spawnRate = initialSpawnRate + (score / 3000);
+            const currentSpeed = initialSpeed + (score / 1000); 
+            const spawnRate = initialSpawnRate + (score / 1000);
 
             ctx.shadowBlur = 15;
             ctx.shadowColor = player.color;
@@ -365,3 +365,4 @@
     </script>
 </body>
 </html>
+
