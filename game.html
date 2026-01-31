@@ -5,82 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blue Adventure - Hardcore</title>
     <style>
-        /* 全体のデザイン設定 */
         body { margin: 0; padding: 0; background: #f4f4f4; color: #333; font-family: "Helvetica Neue", Arial, sans-serif; }
         header { background: #1a1a1a; color: white; padding: 20px 0; text-align: center; border-bottom: 4px solid #ff4757; }
         h1 { margin: 0; font-size: 1.8rem; letter-spacing: 2px; }
         .subtitle { font-size: 0.9rem; color: #aaa; margin-top: 5px; }
-
-        /* メインレイアウト */
         main { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
 
-        /* 広告スペース */
         .ad-space { 
             background: #e0e0e0; height: 100px; line-height: 100px; 
             text-align: center; margin: 20px 0; color: #888; 
             border: 2px dashed #bbb; border-radius: 8px; font-weight: bold;
         }
 
-        /* ゲームラッパー */
         .game-wrapper {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            background: #222;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            position: relative;
+            display: flex; gap: 20px; margin-bottom: 30px;
+            background: #222; padding: 10px; border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4); position: relative;
         }
 
-        /* 左側：ゲーム画面 */
         #game-container { flex: 3; position: relative; min-height: 500px; background: #000; overflow: hidden; border-radius: 4px; }
         canvas { display: block; width: 100%; height: 100%; }
 
-        /* スタート画面（オーバーレイ） */
         #start-screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            color: white;
-            border-radius: 4px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 100; color: white; border-radius: 4px;
         }
         #start-btn {
-            padding: 15px 50px;
-            font-size: 1.5rem;
-            background: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 0 20px rgba(255, 71, 87, 0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 20px;
-            letter-spacing: 1px;
+            padding: 15px 50px; font-size: 1.5rem; background: #ff4757;
+            color: white; border: none; border-radius: 50px; cursor: pointer;
+            font-weight: bold; box-shadow: 0 0 20px rgba(255, 71, 87, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s; margin-top: 20px; letter-spacing: 1px;
         }
         #start-btn:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(255, 71, 87, 0.8); }
 
-        /* 右側：サイドバー */
         #sidebar { flex: 1; background: #333; color: white; padding: 15px; border-radius: 4px; min-width: 250px; }
-        
         #sidebar h3 { color: #00d2ff; margin-top: 0; border-bottom: 1px solid #555; padding-bottom: 10px; }
         #ranking-list { padding-left: 20px; color: #ddd; margin: 0; }
         #ranking-list li { margin-bottom: 8px; border-bottom: 1px solid #444; padding: 5px 0; font-size: 0.9rem; display: flex; justify-content: space-between; }
         .rank-score { color: #fff; font-weight: bold; }
         
-        /* 入力フォーム */
         #input-form { display: none; background: #444; padding: 15px; border-radius: 5px; margin-top: 15px; border: 1px solid #00d2ff; }
         input { width: 100%; padding: 8px; margin: 5px 0; border: none; border-radius: 3px; box-sizing: border-box; }
         button.rank-btn { width: 100%; padding: 8px; background: #00d2ff; border: none; font-weight: bold; cursor: pointer; border-radius: 3px; margin-top: 5px; }
         button.rank-btn:hover { background: #00b0d9; }
 
-        /* 説明文エリア */
         .description { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         h2 { border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-top: 30px; }
 
@@ -137,10 +108,6 @@
             <section>
                 <h2>攻略のヒント</h2>
                 <p>このハードモードでは、開始直後から敵の落下速度が速く設定されています。</p>
-                <ul>
-                    <li>画面の端に追い詰められないように注意しましょう。</li>
-                    <li>スコアが伸びるとさらに速度が上がります。</li>
-                </ul>
             </section>
         </div>
 
@@ -149,7 +116,7 @@
 
     <script>
         // ▼▼ ここにあなたのGASのURLを貼り付けてください ▼▼
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxK4skqwJOklnYRYk2dD0QcIDLm2zl7CRnhini5O7KGnVYDs8q1butsdL4jJPrCwBSPNQ/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw1qHVj8ZEiWTrfMHe1QKSmnbGgs4K_0NRhMvbJEWXlqQiD7097q-yQYmT-kzyCw43D/exec"; 
         // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         const canvas = document.getElementById('gameCanvas');
@@ -158,7 +125,6 @@
         const startScreen = document.getElementById('start-screen');
         const startBtn = document.getElementById('start-btn');
 
-        // サイズ調整
         function resize() {
             canvas.width = container.clientWidth;
             canvas.height = container.clientHeight;
@@ -175,7 +141,6 @@
         const player = { x: canvas.width / 2, y: 400, size: 15, color: '#00d2ff' };
         let enemies = [];
 
-        // 難易度設定
         const initialSpeed = 8; 
         const initialSpawnRate = 0.08; 
 
@@ -258,4 +223,111 @@
             ctx.fillStyle = "white";
             ctx.font = "bold 24px Arial";
             ctx.textAlign = "left";
-            ctx.fillText("
+            ctx.fillText("Score: " + score, 20, 40);
+
+            animationId = requestAnimationFrame(update);
+        }
+
+        function endGame() {
+            gameOver = true;
+            isPlaying = false;
+            
+            ctx.fillStyle = "rgba(0,0,0,0.7)";
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#ff4757";
+            ctx.font = "bold 40px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 20);
+            
+            ctx.fillStyle = "white";
+            ctx.font = "20px Arial";
+            ctx.fillText("Final Score: " + score, canvas.width/2, canvas.height/2 + 30);
+
+            checkRankIn();
+            
+            setTimeout(() => {
+                if(!isRankIn) {
+                    ctx.font = "16px Arial";
+                    ctx.fillStyle = "#ccc";
+                    ctx.fillText("Click to Title", canvas.width/2, canvas.height/2 + 70);
+                    
+                    const returnTitle = () => {
+                        showTitle();
+                        canvas.removeEventListener('click', returnTitle);
+                        canvas.removeEventListener('touchstart', returnTitle);
+                    };
+                    canvas.addEventListener('click', returnTitle);
+                    canvas.addEventListener('touchstart', returnTitle);
+                }
+            }, 1000);
+        }
+
+        let currentRanking = [];
+
+        async function fetchRanking() {
+            document.getElementById('loading').style.display = 'block';
+            try {
+                const res = await fetch(GAS_URL + "?action=get");
+                const data = await res.json();
+                currentRanking = data;
+                renderRanking(data);
+                document.getElementById('loading').style.display = 'none';
+            } catch (e) {
+                console.error(e);
+                document.getElementById('loading').innerText = "Ranking Error";
+            }
+        }
+
+        function renderRanking(data) {
+            const list = document.getElementById('ranking-list');
+            list.innerHTML = "";
+            data.forEach((item, index) => {
+                const li = document.createElement('li');
+                let icon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1) + '.';
+                // escape logic
+                const safeName = item.name ? String(item.name).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m])) : "No Name";
+                li.innerHTML = `<span>${icon} ${safeName}</span> <span class="rank-score">${item.score}</span>`;
+                if(index < 3) li.style.color = "#ffd700";
+                list.appendChild(li);
+            });
+        }
+
+        function checkRankIn() {
+            const lowestScore = currentRanking.length < 10 ? 0 : currentRanking[currentRanking.length - 1].score;
+            if (score > lowestScore || currentRanking.length < 10) {
+                isRankIn = true;
+                document.getElementById('input-form').style.display = 'block';
+                document.getElementById('final-score').innerText = score;
+            }
+        }
+
+        async function submitScore() {
+            const name = document.getElementById('player-name').value || "No Name";
+            const btn = document.querySelector('.rank-btn');
+            btn.disabled = true;
+            btn.innerText = "送信中...";
+
+            try {
+                await fetch(`${GAS_URL}?action=add&name=${encodeURIComponent(name)}&score=${score}`);
+                await fetchRanking();
+                // ポップアップ削除済み
+                document.getElementById('input-form').style.display = 'none';
+                isRankIn = false;
+                showTitle(); 
+            } catch (e) {
+                console.error(e);
+                btn.innerText = "エラー";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "登録";
+            }
+        }
+
+        fetchRanking();
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0,0,canvas.width, canvas.height);
+
+    </script>
+</body>
+</html>
