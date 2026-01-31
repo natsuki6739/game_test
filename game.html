@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Adventure - Hardcore</title>
+    <title>Blue Adventure - Clear Ranking</title>
     <style>
+        /* 全体のデザイン設定 */
         body { margin: 0; padding: 0; background: #f4f4f4; color: #333; font-family: "Helvetica Neue", Arial, sans-serif; }
         header { background: #1a1a1a; color: white; padding: 20px 0; text-align: center; border-bottom: 4px solid #ff4757; }
         h1 { margin: 0; font-size: 1.8rem; letter-spacing: 2px; }
@@ -17,18 +18,28 @@
             border: 2px dashed #bbb; border-radius: 8px; font-weight: bold;
         }
 
+        /* ゲームとランキングを包む枠 */
         .game-wrapper {
             display: flex; gap: 20px; margin-bottom: 30px;
-            background: #222; padding: 10px; border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4); position: relative;
+            /* 背景色を削除して、完全に分離して見えるようにしました */
         }
 
-        #game-container { flex: 3; position: relative; min-height: 500px; background: #000; overflow: hidden; border-radius: 4px; }
+        /* 左側：ゲーム画面（ここだけ暗くなるように設定） */
+        #game-container { 
+            flex: 3; 
+            position: relative; /* 重要：ここを基準にする */
+            min-height: 500px; 
+            background: #000; 
+            overflow: hidden; 
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); /* 影をつけて浮き上がらせる */
+        }
         canvas { display: block; width: 100%; height: 100%; }
 
+        /* スタート画面（ゲーム画面の中だけに表示） */
         #start-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.85); /* 半透明の黒 */
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             z-index: 100; color: white; border-radius: 4px;
@@ -41,7 +52,17 @@
         }
         #start-btn:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(255, 71, 87, 0.8); }
 
-        #sidebar { flex: 1; background: #333; color: white; padding: 15px; border-radius: 4px; min-width: 250px; }
+        /* 右側：サイドバー（ランキング） */
+        #sidebar { 
+            flex: 1; 
+            background: #333; /* 背景色 */
+            color: white; 
+            padding: 15px; 
+            border-radius: 10px; /* 角丸 */
+            min-width: 250px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            height: fit-content; /* 中身に合わせて高さを調整 */
+        }
         #sidebar h3 { color: #00d2ff; margin-top: 0; border-bottom: 1px solid #555; padding-bottom: 10px; }
         #ranking-list { padding-left: 20px; color: #ddd; margin: 0; }
         #ranking-list li { margin-bottom: 8px; border-bottom: 1px solid #444; padding: 5px 0; font-size: 0.9rem; display: flex; justify-content: space-between; }
@@ -65,20 +86,20 @@
 
     <header>
         <h1>BLUE ADVENTURE <span style="color:#ff4757; font-size:0.6em; vertical-align: middle;">(HARD)</span></h1>
-        <div class="subtitle">赤い弾幕を避け続けろ！ランキング機能搭載</div>
+        <div class="subtitle">赤い弾幕を避け続けろ！</div>
     </header>
 
     <main>
         <div class="ad-space">ここにGoogle AdSenseのバナー広告を配置</div>
 
         <div class="game-wrapper">
-            <div id="start-screen">
-                <h2 style="border:none; color:#00d2ff; font-size:2rem; margin-bottom:10px; text-shadow: 0 0 10px rgba(0,210,255,0.5);">READY?</h2>
-                <p>敵の速度：<span style="color:#ff4757; font-weight:bold;">高速</span></p>
-                <button id="start-btn">GAME START</button>
-            </div>
-
             <div id="game-container">
+                <div id="start-screen">
+                    <h2 style="border:none; color:#00d2ff; font-size:2rem; margin-bottom:10px; text-shadow: 0 0 10px rgba(0,210,255,0.5);">READY?</h2>
+                    <p>敵の速度：<span style="color:#ff4757; font-weight:bold;">高速</span></p>
+                    <button id="start-btn">GAME START</button>
+                </div>
+                
                 <canvas id="gameCanvas"></canvas>
             </div>
 
@@ -105,10 +126,6 @@
                 <h2>ゲームの遊び方</h2>
                 <p>スタートボタンを押すとゲームが始まります。青い玉を操作して、上から降ってくる赤い玉を避けてください。</p>
             </section>
-            <section>
-                <h2>攻略のヒント</h2>
-                <p>このハードモードでは、開始直後から敵の落下速度が速く設定されています。</p>
-            </section>
         </div>
 
         <div class="ad-space">ここにレクタングル広告を配置</div>
@@ -116,7 +133,7 @@
 
     <script>
         // ▼▼ ここにあなたのGASのURLを貼り付けてください ▼▼
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbw1qHVj8ZEiWTrfMHe1QKSmnbGgs4K_0NRhMvbJEWXlqQiD7097q-yQYmT-kzyCw43D/exec"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxK4skqwJOklnYRYk2dD0QcIDLm2zl7CRnhini5O7KGnVYDs8q1butsdL4jJPrCwBSPNQ/exec"; 
         // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         const canvas = document.getElementById('gameCanvas');
@@ -285,7 +302,6 @@
             data.forEach((item, index) => {
                 const li = document.createElement('li');
                 let icon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1) + '.';
-                // escape logic
                 const safeName = item.name ? String(item.name).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m])) : "No Name";
                 li.innerHTML = `<span>${icon} ${safeName}</span> <span class="rank-score">${item.score}</span>`;
                 if(index < 3) li.style.color = "#ffd700";
@@ -311,7 +327,6 @@
             try {
                 await fetch(`${GAS_URL}?action=add&name=${encodeURIComponent(name)}&score=${score}`);
                 await fetchRanking();
-                // ポップアップ削除済み
                 document.getElementById('input-form').style.display = 'none';
                 isRankIn = false;
                 showTitle(); 
