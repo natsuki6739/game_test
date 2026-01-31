@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>青い玉の冒険 - Start Button Edition</title>
+    <title>Blue Adventure - Hardcore</title>
     <style>
         /* 全体のデザイン設定 */
         body { margin: 0; padding: 0; background: #f4f4f4; color: #333; font-family: "Helvetica Neue", Arial, sans-serif; }
-        header { background: #1a1a1a; color: white; padding: 20px 0; text-align: center; border-bottom: 4px solid #00d2ff; }
-        h1 { margin: 0; font-size: 1.8rem; }
+        header { background: #1a1a1a; color: white; padding: 20px 0; text-align: center; border-bottom: 4px solid #ff4757; }
+        h1 { margin: 0; font-size: 1.8rem; letter-spacing: 2px; }
         .subtitle { font-size: 0.9rem; color: #aaa; margin-top: 5px; }
 
         /* メインレイアウト */
@@ -21,7 +21,7 @@
             border: 2px dashed #bbb; border-radius: 8px; font-weight: bold;
         }
 
-        /* ゲームラッパー */
+        /* ゲームラッパー（ゲーム＋ランキング） */
         .game-wrapper {
             display: flex;
             gap: 20px;
@@ -29,8 +29,8 @@
             background: #222;
             padding: 10px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            position: relative; /* スタート画面を重ねるために必要 */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            position: relative;
         }
 
         /* 左側：ゲーム画面 */
@@ -48,32 +48,34 @@
             align-items: center;
             z-index: 100;
             color: white;
-            border-radius: 10px;
+            border-radius: 4px;
         }
         #start-btn {
-            padding: 15px 40px;
+            padding: 15px 50px;
             font-size: 1.5rem;
-            background: #00d2ff;
-            color: #000;
+            background: #ff4757; /* ハードモードっぽい赤色 */
+            color: white;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.5);
             transition: transform 0.2s, box-shadow 0.2s;
             margin-top: 20px;
+            letter-spacing: 1px;
         }
-        #start-btn:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(0, 210, 255, 0.8); }
+        #start-btn:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(255, 71, 87, 0.8); }
 
         /* 右側：サイドバー */
         #sidebar { flex: 1; background: #333; color: white; padding: 15px; border-radius: 4px; min-width: 250px; }
         
-        /* ランキングとフォーム */
+        /* ランキングデザイン */
         #sidebar h3 { color: #00d2ff; margin-top: 0; border-bottom: 1px solid #555; padding-bottom: 10px; }
         #ranking-list { padding-left: 20px; color: #ddd; margin: 0; }
         #ranking-list li { margin-bottom: 8px; border-bottom: 1px solid #444; padding: 5px 0; font-size: 0.9rem; display: flex; justify-content: space-between; }
         .rank-score { color: #fff; font-weight: bold; }
         
+        /* 入力フォーム */
         #input-form { display: none; background: #444; padding: 15px; border-radius: 5px; margin-top: 15px; border: 1px solid #00d2ff; }
         input { width: 100%; padding: 8px; margin: 5px 0; border: none; border-radius: 3px; box-sizing: border-box; }
         button.rank-btn { width: 100%; padding: 8px; background: #00d2ff; border: none; font-weight: bold; cursor: pointer; border-radius: 3px; margin-top: 5px; }
@@ -92,8 +94,8 @@
 <body>
 
     <header>
-        <h1>青い玉の冒険 <span style="color:#ff4757; font-size:0.8em;">(Hard Mode)</span></h1>
-        <div class="subtitle">スタートボタンを押して挑戦開始！</div>
+        <h1>BLUE ADVENTURE <span style="color:#ff4757; font-size:0.6em; vertical-align: middle;">(HARD)</span></h1>
+        <div class="subtitle">赤い弾幕を避け続けろ！ランキング機能搭載</div>
     </header>
 
     <main>
@@ -101,8 +103,8 @@
 
         <div class="game-wrapper">
             <div id="start-screen">
-                <h2 style="border:none; color:#00d2ff; font-size:2rem; margin-bottom:10px; text-shadow: 0 0 10px rgba(0,210,255,0.5);">BLUE ADVENTURE</h2>
-                <p>敵を避けてハイスコアを目指せ！</p>
+                <h2 style="border:none; color:#00d2ff; font-size:2rem; margin-bottom:10px; text-shadow: 0 0 10px rgba(0,210,255,0.5);">READY?</h2>
+                <p>敵の速度：<span style="color:#ff4757; font-weight:bold;">高速</span></p>
                 <button id="start-btn">GAME START</button>
             </div>
 
@@ -130,8 +132,16 @@
 
         <div class="description">
             <section>
-                <h2>遊び方</h2>
-                <p>スタートボタンを押すとゲームが始まります。青い玉を操作して、赤い玉に当たらないように逃げ続けてください。</p>
+                <h2>ゲームの遊び方</h2>
+                <p>スタートボタンを押すとゲームが始まります。青い玉を操作して、上から降ってくる赤い玉を避けてください。</p>
+            </section>
+            <section>
+                <h2>攻略のヒント</h2>
+                <p>このハードモードでは、開始直後から敵の落下速度が速く設定されています。</p>
+                <ul>
+                    <li>画面の端に追い詰められないように注意しましょう。</li>
+                    <li>スコアが伸びるとさらに速度が上がります。</li>
+                </ul>
             </section>
         </div>
 
@@ -159,23 +169,24 @@
 
         let score = 0;
         let gameOver = false;
-        let isPlaying = false; // ゲーム中かどうか
+        let isPlaying = false; 
         let isRankIn = false;
         let animationId;
 
         // プレイヤー初期化
         const player = { x: canvas.width / 2, y: 400, size: 15, color: '#00d2ff' };
         let enemies = [];
-        const baseSpeed = 5;
+
+        // ★難易度設定（最初から難しく！）
+        const initialSpeed = 8; // 初期スピード（以前は5）
+        const initialSpawnRate = 0.08; // 初期出現率（以前は0.05）
 
         // スタートボタン処理
         startBtn.addEventListener('click', () => {
-            startScreen.style.display = 'none'; // スタート画面を隠す
+            startScreen.style.display = 'none';
             resetGame();
         });
 
-        // リトライ処理（ゲームオーバー時にクリックで再開）
-        /* 今回はスタートボタンがあるので、ゲームオーバー後は一度タイトルに戻る形式にします */
         function showTitle() {
             startScreen.style.display = 'flex';
             isPlaying = false;
@@ -201,21 +212,19 @@
             gameOver = false;
             isPlaying = true;
             document.getElementById('input-form').style.display = 'none';
-            player.x = canvas.width / 2; // 位置リセット
+            player.x = canvas.width / 2;
             
-            // アニメーション再開
             if (animationId) cancelAnimationFrame(animationId);
             update();
         }
 
         function update() {
             if (gameOver) return;
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 難易度調整
-            const currentSpeed = baseSpeed + (score / 150);
-            const spawnRate = 0.05 + (score / 3000);
+            // 難易度調整ロジック（スコアに応じてさらに鬼畜に）
+            const currentSpeed = initialSpeed + (score / 100); 
+            const spawnRate = initialSpawnRate + (score / 2000);
 
             // プレイヤー描画
             ctx.shadowBlur = 15;
@@ -226,15 +235,16 @@
             ctx.fill();
             ctx.shadowBlur = 0;
 
-            // 敵の生成と移動
+            // 敵の生成
             if (Math.random() < spawnRate) {
                 enemies.push({ 
                     x: Math.random() * canvas.width, 
-                    y: -20,
-                    size: 8 + Math.random() * 8 
+                    y: -30,
+                    size: 8 + Math.random() * 10 // 大きさもランダム
                 });
             }
 
+            // 敵の移動
             ctx.fillStyle = '#ff4757';
             for (let i = 0; i < enemies.length; i++) {
                 enemies[i].y += currentSpeed;
@@ -247,13 +257,11 @@
                 const dy = player.y - enemies[i].y;
                 if (Math.sqrt(dx*dx + dy*dy) < player.size + enemies[i].size) {
                     endGame();
-                    return; // ここでループを止める
+                    return;
                 }
             }
             
-            // 画面外削除
             enemies = enemies.filter(e => e.y < canvas.height + 50);
-
             score++;
             
             // スコア表示
@@ -269,7 +277,6 @@
             gameOver = true;
             isPlaying = false;
             
-            // ゲームオーバー画面描画
             ctx.fillStyle = "rgba(0,0,0,0.7)";
             ctx.fillRect(0,0,canvas.width, canvas.height);
             
@@ -282,28 +289,27 @@
             ctx.font = "20px Arial";
             ctx.fillText("Final Score: " + score, canvas.width/2, canvas.height/2 + 30);
 
-            // ランキング判定後にボタンを表示するか決める
             checkRankIn();
             
-            // 3秒後にタイトルに戻すボタンを表示するか、
-            // 画面クリックでタイトルに戻るようにする
+            // 1秒後にクリックでタイトルに戻るイベントを設定
             setTimeout(() => {
                 if(!isRankIn) {
                     ctx.font = "16px Arial";
                     ctx.fillStyle = "#ccc";
                     ctx.fillText("Click to Title", canvas.width/2, canvas.height/2 + 70);
                     
-                    // ワンクリックでタイトルへ戻るイベントを一時的に追加
                     const returnTitle = () => {
                         showTitle();
                         canvas.removeEventListener('click', returnTitle);
+                        canvas.removeEventListener('touchstart', returnTitle);
                     };
                     canvas.addEventListener('click', returnTitle);
+                    canvas.addEventListener('touchstart', returnTitle);
                 }
             }, 1000);
         }
 
-        // --- ランキング機能 ---
+        // --- ランキング機能（変更なし） ---
         let currentRanking = [];
 
         async function fetchRanking() {
@@ -353,7 +359,7 @@
                 alert("Ranked in!");
                 document.getElementById('input-form').style.display = 'none';
                 isRankIn = false;
-                showTitle(); // 送信後はタイトルへ
+                showTitle(); 
             } catch (e) {
                 alert("Error: " + e);
             } finally {
@@ -369,12 +375,11 @@
             });
         }
 
-        // 初期化
         fetchRanking();
-        // 最初の画面描画（背景を少し暗くしておく）
+        // 最初の描画
         ctx.fillStyle = "#000";
         ctx.fillRect(0,0,canvas.width, canvas.height);
-        
+
     </script>
 </body>
 </html>
