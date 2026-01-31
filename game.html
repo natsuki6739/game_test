@@ -175,7 +175,7 @@
         // 初期スピードを 8 → 4 に変更（ゆっくりスタート）
         const initialSpeed = 1; 
         // 初期出現率を 0.08 → 0.04 に変更（敵少なめスタート）
-        const initialSpawnRate = 0.01; 
+        const initialSpawnRate = 0.001; 
 
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
@@ -220,7 +220,7 @@
             // スコア100点ごとにスピードが+1される
             const currentSpeed = initialSpeed + (score / 500); 
             // スコア2000点ごとに敵の出現率が増える
-            const spawnRate = initialSpawnRate + (score / 2000);
+            const spawnRate = initialSpawnRate + (score / 500)*0.001;
 
             ctx.shadowBlur = 15;
             ctx.shadowColor = player.color;
@@ -378,6 +378,7 @@
     </script>
 </body>
 </html>
+
 
 
 
